@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# dual.sh - Konfiguracja dwóch monitorów obok siebie
+# DP-3: 2560x1440@60Hz  (lewy,  pozycja 0,0)
+# DP-4: 2560x1440@120Hz (prawy, pozycja 2560,0)
+
+set -euo pipefail
+source "$HOME/.local/bin/display-lib"
+
+set_out "DP-3" "2560x1440@59.95" "0,0" "1"
+set_out "DP-4" "2560x1440@120.00" "2560,0" "1"
+
+kscreen-doctor \
+  output.DP-5.disable \
+  output.HDMI-A-1.disable \
+  output.HDMI-A-3.disable \
+  output.HDMI-A-4.disable

@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# triple.sh - Konfiguracja trzech monitorów w poziomym rzędzie
+# DP-3, DP-4, DP-5 @ 2560x1440 (wszystkie na y=1200)
+# Wyłączone: wszystkie wyjścia HDMI
+
+set -euo pipefail
+source "$HOME/.local/bin/display-lib"
+
+# Dynamiczne rozpoznawanie ID trybów (stabilne po restarcie)
+M_DP3="$(mode_id_fuzzy "DP-3" "2560x1440@59.95")"
+M_DP4="$(mode_id_fuzzy "DP-4" "2560x1440@120.00")"
+M_DP5="$(mode_id_fuzzy "DP-5" "2560x1440@59.95")"
+
+kscreen-doctor \
+  output.HDMI-A-1.disable \
+  output.HDMI-A-3.disable \
+  output.HDMI-A-4.disable \
+  output.DP-3.enable \
+  output.DP-4.enable \
+  output.DP-5.enable \
+  "output.DP-3.mode.${M_DP3}" \
+  "output.DP-4.mode.${M_DP4}" \
+  "output.DP-5.mode.${M_DP5}" \
+  output.DP-3.scale.1 \
+  output.DP-4.scale.1 \
+  output.DP-5.scale.1 \
+  output.DP-3.position.0,1200 \
+  output.DP-4.position.2560,1200 \
+  output.DP-5.position.5120,1200

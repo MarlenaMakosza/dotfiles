@@ -1,0 +1,19 @@
+sourceDir = "{{ .chezmoi.homeDir }}/dotfiles"
+
+[data]
+  gitEmail = {{ promptStringOnce . "gitEmail" "Git email" | quote }}
+  gitName = {{ promptStringOnce . "gitName" "Git name" | quote }}
+  atuinSyncAddr = {{ promptStringOnce . "atuinSyncAddr" "Atuin sync address" | quote }}
+  sourceProjects = {{ promptStringOnce . "sourceProjects" "Projects directory (e.g. /source)" | quote }}
+  plantumlJarPath = {{ promptStringOnce . "plantumlJarPath" "PlantUML jar path (e.g. /opt/plantuml.jar)" | quote }}
+
+[diff]
+  command = "meld"
+
+[edit]
+  command = "zeditor"
+  args = ["--wait"]
+
+[git]
+  autoCommit = true
+  autoPush = true

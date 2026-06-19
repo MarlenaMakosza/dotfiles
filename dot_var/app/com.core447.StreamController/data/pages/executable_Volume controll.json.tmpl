@@ -1,0 +1,207 @@
+{
+    "brightness": {
+        "value": 75
+    },
+    "auto-change": {
+        "enable": true,
+        "wm_class": "",
+        "title": "",
+        "stay_on_page": true
+    },
+    "keys": {
+        "2x1": {
+            "states": {
+                "0": {
+                    "actions": [
+                        {
+                            "id": "com_core447_MediaPlugin::PlayPause",
+                            "settings": {
+                                "show_label": true,
+                                "show_thumbnail": true
+                            }
+                        }
+                    ],
+                    "image-control-action": 0,
+                    "label-control-actions": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "background-control-action": 0
+                }
+            }
+        },
+        "0x0": {
+            "states": {
+                "0": {
+                    "actions": [
+                        {
+                            "id": "com_gapls_AudioControl::Mute",
+                            "settings": {
+                                "use-standard": true,
+                                "pulse-name": "alsa_output.usb-SteelSeries_Arctis_Nova_7X-00.analog-stereo"
+                            }
+                        }
+                    ],
+                    "image-control-action": 0,
+                    "label-control-actions": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "background-control-action": 0
+                }
+            }
+        },
+        "4x2": {
+            "states": {
+                "0": {
+                    "actions": [
+                        {
+                            "id": "com_core447_DeckPlugin::ChangePage",
+                            "settings": {
+                                "selected_page": "{{ .chezmoi.homeDir }}/.var/app/com.core447.StreamController/data/pages/System state.json",
+                                "deck_number": null
+                            }
+                        }
+                    ],
+                    "image-control-action": 0,
+                    "label-control-actions": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "background-control-action": 0
+                }
+            }
+        },
+        "3x0": {
+            "states": {
+                "0": {
+                    "actions": [
+                        {
+                            "id": "com_gapls_AudioControl::SetDefaultDevice",
+                            "settings": {
+                                "pulse-name": "alsa_output.usb-SteelSeries_Arctis_Nova_7X-00.analog-stereo"
+                            }
+                        }
+                    ],
+                    "image-control-action": 0,
+                    "label-control-actions": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "background-control-action": 0
+                }
+            }
+        },
+        "0x1": {
+            "states": {
+                "0": {
+                    "actions": [
+                        {
+                            "id": "com_gapls_AudioControl::AdjustVolume",
+                            "settings": {
+                                "use-standard": true,
+                                "pulse-name": "alsa_output.usb-SteelSeries_Arctis_Nova_7X-00.analog-stereo",
+                                "volume-adjust": -5.0
+                            }
+                        }
+                    ],
+                    "image-control-action": 0,
+                    "label-control-actions": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "background-control-action": 0
+                }
+            }
+        },
+        "0x2": {
+            "states": {
+                "0": {
+                    "actions": [
+                        {
+                            "id": "com_gapls_AudioControl::AdjustVolume",
+                            "settings": {
+                                "use-standard": true,
+                                "pulse-name": "alsa_output.usb-SteelSeries_Arctis_Nova_7X-00.analog-stereo",
+                                "volume-adjust": 5.0
+                            }
+                        }
+                    ],
+                    "image-control-action": 0,
+                    "label-control-actions": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "background-control-action": 0
+                }
+            }
+        },
+        "4x0": {
+            "states": {
+                "0": {
+                    "actions": [
+                        {
+                            "id": "com_core447_VolumeMixer::Open",
+                            "settings": {}
+                        }
+                    ],
+                    "image-control-action": 0,
+                    "label-control-actions": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "background-control-action": 0
+                }
+            }
+        },
+        "1x0": {
+            "states": {
+                "0": {
+                    "actions": [
+                        {
+                            "id": "com_gapls_AudioControl::SetDefaultDevice",
+                            "settings": {
+                                "pulse-name": "alsa_output.pci-0000_80_1f.3.iec958-stereo"
+                            }
+                        }
+                    ],
+                    "image-control-action": 0,
+                    "label-control-actions": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "background-control-action": 0
+                }
+            }
+        },
+        "2x0": {
+            "states": {
+                "0": {
+                    "actions": [
+                        {
+                            "id": "com_gapls_AudioControl::SetDefaultDevice",
+                            "settings": {
+                                "pulse-name": "alsa_output.pci-0000_03_00.1.hdmi-stereo"
+                            }
+                        }
+                    ],
+                    "image-control-action": 0,
+                    "label-control-actions": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "background-control-action": 0
+                }
+            }
+        }
+    }
+}

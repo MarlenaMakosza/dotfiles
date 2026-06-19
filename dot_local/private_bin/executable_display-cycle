@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# cycle.sh - Przełącza konfiguracje wyświetlaczy w zależności od liczby aktywnych monitorów
+# 1 aktywny  → dual (2 monitory)
+# 2 aktywne  → multitask (6 monitorów)
+# 3+ aktywne → gaming (1 monitor 240Hz)
+
+set -euo pipefail
+
+ACTIVE=$(kscreen-doctor -o | grep -c "enabled")
+
+case "$ACTIVE" in
+  1) display-dual ;;
+  2) display-multitask ;;
+  *) display-gaming ;;
+esac

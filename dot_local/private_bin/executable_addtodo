@@ -1,0 +1,148 @@
+#!/usr/bin/env bash
+# addtodo — Trilium todo capture (called from wofi or terminal)
+# Location: ~/.config/myconfigs/trilium-rofi/addtodo
+# Symlink:  ~/.local/bin/addtodo → above
+#
+# Usage:
+#   addtodo buy milk
+#   addtodo web: fix nav bug
+#   addtodo !high urgent call
+#   addtodo thesis: !low add citations
+#   addtodo HL: check logs
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+CONFIG="${SCRIPT_DIR}/notes.conf"
+
+# ── Load config ───────────────────────────────────────────────────────────────
+if [[ ! -f "$CONFIG" ]]; then
+    notify-send -a "Trilium Todo" -i dialog-error \
+        "Config missing" "Edit ${CONFIG} before first use."
+    exit 1
+fi
+# shellcheck source=/dev/null
+source "$CONFIG"
+
+# ── Join all arguments into a single input string ─────────────────────────────
+# wofi passes "addtodo web: fix bug" as separate args: $1="web:" $2="fix" $3="bug"
+FULL_INPUT="$*"
+FULL_INPUT="$(printf '%s' "$FULL_INPUT" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+
+if [[ -z "$FULL_INPUT" ]]; then
+    notify-send -a "Trilium Todo" -i dialog-error \
+        "No input" "Usage: addtodo [prefix:] [!priority] task text"
+    exit 1
+fi
+
+# ── Parse prefix (word: at start) ─────────────────────────────────────────────
+PREFIX=""
+REMAINDER="$FULL_INPUT"
+if [[ "$REMAINDER" =~ ^([a-zA-Z][a-zA-Z0-9_]*):[[:space:]]*(.*) ]]; then
+    PREFIX="${BASH_REMATCH[1],,}"    # force lowercase
+    REMAINDER="${BASH_REMATCH[2]}"
+fi
+
+# ── Parse priority (!word) ────────────────────────────────────────────────────
+PRIORITY=""
+if [[ "$REMAINDER" =~ ^(!([a-zA-Z]+))[[:space:]]*(.*) ]]; then
+    PRIORITY="${BASH_REMATCH[1],,}"  # e.g. !high
+    REMAINDER="${BASH_REMATCH[3]}"
+fi
+
+# ── Task text ─────────────────────────────────────────────────────────────────
+TASK_TEXT="$(printf '%s' "$REMAINDER" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+if [[ -z "$TASK_TEXT" ]]; then
+    notify-send -a "Trilium Todo" -i dialog-error \
+        "Empty task" "No task text after prefix/priority."
+    exit 1
+fi
+
+# ── Resolve note ID ───────────────────────────────────────────────────────────
+NOTE_ID="$DEFAULT_NOTE_ID"
+if [[ -n "$PREFIX" ]]; then
+    VAR_NAME="NOTE_${PREFIX}"
+    RESOLVED="${!VAR_NAME:-}"
+    if [[ -z "$RESOLVED" ]]; then
+        notify-send -a "Trilium Todo" -i dialog-error \
+            "Unknown prefix '${PREFIX}'" \
+            "Add NOTE_${PREFIX}=<noteId> to notes.conf"
+        exit 1
+    fi
+    NOTE_ID="$RESOLVED"
+fi
+
+# ── Retrieve ETAPI token from KWallet6 ────────────────────────────────────────
+TOKEN=""
+if command -v kwallet-query &>/dev/null; then
+    TOKEN=$(kwallet-query -r "$WALLET_KEY" -f "$WALLET_FOLDER" kdewallet 2>/dev/null || true)
+fi
+if [[ -z "$TOKEN" ]]; then
+    FALLBACK="${SCRIPT_DIR}/.etapi-token"
+    [[ -f "$FALLBACK" ]] && TOKEN=$(< "$FALLBACK")
+fi
+if [[ -z "$TOKEN" ]]; then
+    notify-send -a "Trilium Todo" -i dialog-error \
+        "No ETAPI token" \
+        "Run: kwallet-query --write-password etapi-token --folder Trilium kdewallet"
+    exit 1
+fi
+
+# ── HTML escape (&amp; must be first to avoid double-escaping) ────────────────
+html_escape() {
+    local s="${1//&/&amp;}"
+    s="${s//</&lt;}"; s="${s//>/&gt;}"
+    s="${s//\"/&quot;}"; s="${s//\'/&#39;}"
+    printf '%s' "$s"
+}
+
+# ── Build display text ────────────────────────────────────────────────────────
+DISPLAY_TEXT="$TASK_TEXT"
+[[ -n "$PRIORITY" ]] && DISPLAY_TEXT="[${PRIORITY}] ${TASK_TEXT}"
+ESCAPED="$(html_escape "$DISPLAY_TEXT")"
+
+# ── Build Trilium CKEditor5 checkbox HTML ─────────────────────────────────────
+ITEM_ID=$(xxd -l 17 -p /dev/urandom)
+NEW_ITEM='<ul class="todo-list"><li data-list-item-id="'"${ITEM_ID}"'"><label class="todo-list__label"><input type="checkbox" disabled="disabled"><span class="todo-list__label__description">'"${ESCAPED}"'</span></label></li></ul>'
+
+# ── Fetch current note content ────────────────────────────────────────────────
+CURRENT=$(curl --silent --fail --max-time 10 \
+    -H "Authorization: Bearer ${TOKEN}" \
+    "${TRILIUM_URL}/etapi/notes/${NOTE_ID}/content") || {
+    notify-send -a "Trilium Todo" -i network-error \
+        "Fetch failed" "Cannot read note. Is ${TRILIUM_URL} reachable?"
+    exit 1
+}
+
+# ── Prepend new item to existing content ─────────────────────────────────────
+NEW_CONTENT="${NEW_ITEM}${CURRENT}"
+
+# ── Write back ────────────────────────────────────────────────────────────────
+HTTP_STATUS=$(curl --silent --output /dev/null --write-out "%{http_code}" \
+    --max-time 10 -X PUT \
+    -H "Authorization: Bearer ${TOKEN}" \
+    -H "Content-Type: text/plain" \
+    --data-raw "${NEW_CONTENT}" \
+    "${TRILIUM_URL}/etapi/notes/${NOTE_ID}/content")
+
+case "$HTTP_STATUS" in
+    200|204)
+        SHORT="${DISPLAY_TEXT:0:60}"
+        [[ ${#DISPLAY_TEXT} -gt 60 ]] && SHORT="${SHORT}..."
+        DEST="${PREFIX:-default}"
+        notify-send -a "Trilium Todo" -i checkbox \
+            "Todo Added" "${SHORT}  →  ${DEST}"
+        ;;
+    401)
+        notify-send -a "Trilium Todo" -i dialog-error \
+            "Auth failed (401)" "Regenerate ETAPI token in Trilium → Options."
+        exit 1 ;;
+    404)
+        notify-send -a "Trilium Todo" -i dialog-error \
+            "Note not found (404)" "Note ID: ${NOTE_ID}"
+        exit 1 ;;
+    *)
+        notify-send -a "Trilium Todo" -i dialog-error \
+            "HTTP ${HTTP_STATUS}" "Trilium API error."
+        exit 1 ;;
+esac

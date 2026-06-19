@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# gaming.sh - Konfiguracja dla gier (pojedynczy monitor z maksymalną częstotliwością)
+# Aktywny: DP-4 @ 2560x1440 240Hz
+# Wyłączone: wszystkie pozostałe wyjścia
+
+set -euo pipefail
+source "$HOME/.local/bin/display-lib"
+
+set_out "DP-4" "2560x1440@240.00" "0,0" "1"
+
+kscreen-doctor \
+  output.DP-3.disable \
+  output.DP-5.disable \
+  output.HDMI-A-1.disable \
+  output.HDMI-A-3.disable \
+  output.HDMI-A-4.disable

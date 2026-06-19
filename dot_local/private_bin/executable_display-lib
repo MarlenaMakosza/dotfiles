@@ -1,0 +1,119 @@
+#!/usr/bin/env bash
+# _ksmart.sh - Biblioteka funkcji pomocniczych dla konfiguracji wyświetlaczy
+# Używana przez wszystkie skrypty do inteligentnego zarządzania trybami ekranu
+# Główne funkcje:
+#   - mode_id_fuzzy(): fuzzy matching dla trybu ekranu (obsługa wariantów częstotliwości)
+#   - set_out(): konfiguracja wyjścia (tryb, pozycja, skalowanie)
+
+set -euo pipefail
+
+# Usuń kody kolorów ANSI + CR, normalizuj tabulatory na spacje
+clean_stream() {
+  tr -d '\r' \
+  | sed -r 's/\x1B\[[0-9;]*m//g' \
+  | sed $'s/\t/        /g'
+}
+
+ks_out() {
+  # Some environments colorize tool output; remove it for parsing.
+  kscreen-doctor -o | clean_stream
+}
+
+extract_conn() {
+  local line="$1"
+  local a b c rest
+  read -r a b c rest <<< "$line" || true
+  [[ "${a:-}" == "Output:" ]] || return 1
+  [[ -n "${c:-}" ]] || return 1
+  printf '%s' "$c"
+}
+
+list_conns() {
+  local line c
+  while IFS= read -r line; do
+    [[ "$line" == Output:* ]] || continue
+    c="$(extract_conn "$line" || true)"
+    [[ -n "${c:-}" ]] && printf '%s\n' "$c"
+  done < <(ks_out)
+}
+
+modes_line_for() {
+  local want="$1"
+  local in_section=0
+  local line c
+
+  while IFS= read -r line; do
+    if [[ "$line" == Output:* ]]; then
+      c="$(extract_conn "$line" || true)"
+      if [[ "$c" == "$want" ]]; then
+        in_section=1
+      else
+        in_section=0
+      fi
+      continue
+    fi
+
+    if (( in_section )) && [[ "$line" == "        Modes:"* ]]; then
+      printf '%s\n' "$line"
+      return 0
+    fi
+  done < <(ks_out)
+
+  echo "ERROR: Could not find Modes line for output ${want}" >&2
+  echo -n "DEBUG: connectors seen: " >&2
+  list_conns | tr '\n' ' ' >&2
+  echo >&2
+  return 2
+}
+
+mode_id() {
+  local conn="$1"
+  local sig="$2"
+  local modes_line token id
+
+  modes_line="$(modes_line_for "$conn")"
+
+  token="$(
+    printf '%s\n' "$modes_line" \
+      | tr ' ' '\n' \
+      | grep -F "$sig" \
+      | head -n1 || true
+  )"
+
+  if [[ -z "${token:-}" ]]; then
+    echo "ERROR: Mode signature '${sig}' not found for output ${conn}" >&2
+    echo "HINT: ${modes_line}" >&2
+    return 3
+  fi
+
+  id="${token%%:*}"
+  [[ "$id" =~ ^[0-9]+$ ]] || { echo "ERROR: bad id from token '$token'"; return 4; }
+  printf '%s' "$id"
+}
+
+mode_id_fuzzy() {
+  local conn="$1" sig="$2" id=""
+  if id="$(mode_id "$conn" "$sig" 2>/dev/null)"; then
+    printf '%s' "$id"; return 0
+  fi
+
+  case "$sig" in
+    *"@60.00")  mode_id "$conn" "${sig/@60.00/@59.95}" || mode_id "$conn" "${sig/@60.00/@59.94}" ;;
+    *"@59.95")  mode_id "$conn" "${sig/@59.95/@59.94}" || mode_id "$conn" "${sig/@59.95/@60.00}" ;;
+    *"@240.00") mode_id "$conn" "${sig/@240.00/@239.94}" ;;
+    *"@120.00") mode_id "$conn" "${sig/@120.00/@119.88}" ;;
+    *) return 3 ;;
+  esac
+}
+
+set_out() {
+  local conn="$1" sig="$2" pos="$3" scale="$4"
+  local id
+  id="$(mode_id_fuzzy "$conn" "$sig")"
+
+  kscreen-doctor \
+    "output.${conn}.enable" \
+    "output.${conn}.mode.${id}" \
+    "output.${conn}.scale.${scale}" \
+    "output.${conn}.position.${pos}"
+}

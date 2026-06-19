@@ -1,0 +1,81 @@
+# --- Git auto pull on directory change (tylko ~/source/*, cache 5 minut) ---
+# Wymaga zsh + git
+typeset -gA GIT_AUTO_PULL_CACHE  # associative array: repo_root -> epoch_seconds
+GIT_AUTO_PULL_BASE="{{ .sourceProjects }}"
+GIT_AUTO_PULL_TTL=300            # 5 min = 300s
+
+_git_repo_root() {
+  command git -C "$1" rev-parse --show-toplevel 2>/dev/null
+}
+
+_git_has_upstream() {
+  command git -C "$1" rev-parse --abbrev-ref '@{u}' >/dev/null 2>&1
+}
+
+_git_is_dirty() {
+  [[ -n "$(command git -C "$1" status --porcelain 2>/dev/null)" ]]
+}
+
+_git_now_epoch() {
+  # zsh builtin date via printf +E isn't portable; use `date +%s`
+  command date +%s
+}
+
+_git_autopull_maybe() {
+  local dir="$PWD"
+  local repo_root="$(_git_repo_root "$dir")"
+  [[ -z "$repo_root" ]] && return 0
+
+  # tylko repo w ~/source
+  case "$repo_root" in
+    "$GIT_AUTO_PULL_BASE"/*) ;;
+    *) return 0 ;;
+  esac
+
+  local now="$(_git_now_epoch)"
+  local last="${GIT_AUTO_PULL_CACHE[$repo_root]}"
+  if [[ -n "$last" ]]; then
+    local age=$(( now - last ))
+    (( age < GIT_AUTO_PULL_TTL )) && return 0
+  fi
+
+  # cache update helper
+  _git_cache_touch() { GIT_AUTO_PULL_CACHE[$repo_root]="$now" }
+
+  # brak upstream -> skip
+  if ! _git_has_upstream "$repo_root"; then
+    _git_cache_touch
+    return 0
+  fi
+
+  # brudne repo -> skip
+  if _git_is_dirty "$repo_root"; then
+    print "⚠️  Niezcommitowane zmiany - pomijam"
+    _git_cache_touch
+    return 0
+  fi
+
+  print "🔄 Sprawdzam..."
+  if ! command git -C "$repo_root" fetch --quiet; then
+    print "⚠️  Błąd fetch"
+    _git_cache_touch
+    return 0
+  fi
+
+  if command git -C "$repo_root" pull --ff-only; then
+    print "✅ OK"
+  else
+    print "⚠️  Nie można fast-forward"
+  fi
+
+  _git_cache_touch
+}
+
+# Hook: chpwd odpala się po zmianie katalogu
+autoload -Uz add-zsh-hook
+add-zsh-hook chpwd _git_autopull_maybe
+
+# (opcjonalnie) uruchom też na starcie shella:
+if is_interactive; then
+  _git_autopull_maybe
+fi

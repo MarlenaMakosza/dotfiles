@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# triple-top.sh - Konfiguracja trzech górnych monitorów
+# HDMI-A-1, HDMI-A-3 @ 1920x1080, HDMI-A-4 @ 1920x1200
+# HDMI-A-4 wyższy o 120px → y=0; pozostałe → y=120 (bottom-align)
+# Wyłączone: wyjścia DP
+
+set -euo pipefail
+source "$HOME/.local/bin/display-lib"
+
+M_H1="$(mode_id_fuzzy "HDMI-A-1" "1920x1080@60.00")"
+M_H3="$(mode_id_fuzzy "HDMI-A-3" "1920x1080@60.00")"
+M_H4="$(mode_id_fuzzy "HDMI-A-4" "1920x1200@59.95")"
+
+kscreen-doctor \
+  output.DP-3.disable \
+  output.DP-4.disable \
+  output.DP-5.disable \
+  output.HDMI-A-1.enable \
+  output.HDMI-A-3.enable \
+  output.HDMI-A-4.enable \
+  "output.HDMI-A-1.mode.${M_H1}" \
+  "output.HDMI-A-3.mode.${M_H3}" \
+  "output.HDMI-A-4.mode.${M_H4}" \
+  output.HDMI-A-1.scale.1 \
+  output.HDMI-A-3.scale.1 \
+  output.HDMI-A-4.scale.1 \
+  output.HDMI-A-1.position.0,120 \
+  output.HDMI-A-3.position.1920,120 \
+  output.HDMI-A-4.position.3840,0

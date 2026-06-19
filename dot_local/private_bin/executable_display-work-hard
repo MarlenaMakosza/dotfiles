@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# work-hard.sh - Konfiguracja "ciężkiej pracy" - tylko 2 boczne monitory 2K
+# Dolny rząd:  DP-3 (lewy), DP-5 (prawy) @ 2560x1440
+# Wyłączone: DP-4, wszystkie HDMI
+# Minimalna konfiguracja do skupionej pracy
+
+set -euo pipefail
+source "$HOME/.local/bin/display-lib"
+
+# Wyłącz wszystkie niepotrzebne
+kscreen-doctor \
+  output.DP-4.disable \
+  output.HDMI-A-1.disable \
+  output.HDMI-A-3.disable \
+  output.HDMI-A-4.disable
+
+# Włącz tylko boczne monitory 2K
+set_out "DP-3" "2560x1440@59.95" "0,0" "1"
+set_out "DP-5" "2560x1440@59.95" "2560,0" "1"

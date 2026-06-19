@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# work-lazy.sh - Konfiguracja "leniwej pracy" - 5 monitorów (bez środkowego głównego)
+# Górny rząd:  HDMI-A-1, HDMI-A-3 (1920x1080), HDMI-A-4 (1920x1200)
+# Dolny rząd:  DP-3, DP-5 (2560x1440) - DP-4 WYŁĄCZONY
+# Jak multitask ale bez środkowego monitora 2K
+
+set -euo pipefail
+source "$HOME/.local/bin/display-lib"
+
+# === FAZA 1: włączenie wyjść + tryby TYLKO ===
+kscreen-doctor \
+  output.DP-3.enable \
+  output.DP-5.enable \
+  output.HDMI-A-1.enable \
+  output.HDMI-A-3.enable \
+  output.HDMI-A-4.enable \
+  output.DP-4.disable
+
+# Set modes (no positions yet)
+set_out "DP-3" "2560x1440@59.95"  "0,0" "1"
+set_out "DP-5" "2560x1440@59.95"  "0,0" "1"
+set_out "HDMI-A-1" "1920x1080@60.00" "0,0" "1"
+set_out "HDMI-A-3" "1920x1080@60.00" "0,0" "1"
+set_out "HDMI-A-4" "1920x1200@59.95" "0,0" "1"
+
+# Daj KWin czas na ustabilizowanie się
+sleep 0.2
+
+# === FAZA 2: pozycje TYLKO ===
+kscreen-doctor \
+  output.DP-3.position.0,1200 \
+  output.DP-5.position.2560,1200 \
+  output.HDMI-A-1.position.886,120 \
+  output.HDMI-A-3.position.2806,120 \
+  output.HDMI-A-4.position.4726,0

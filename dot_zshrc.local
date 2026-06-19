@@ -1,0 +1,1 @@
+for f in ~/.zshrc.d/*.zsh(N); do source "$f"; done

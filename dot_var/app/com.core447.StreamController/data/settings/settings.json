@@ -1,0 +1,12 @@
+{
+    "general": {
+        "app-launches": 277,
+        "show-donate-window": false
+    },
+    "system": {
+        "keep-running": true
+    },
+    "store": {
+        "responsibility-notes-agreed": true
+    }
+}

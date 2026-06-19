@@ -1,0 +1,71 @@
+[user]
+	email = {{ .gitEmail }}
+	name = {{ .gitName }}
+[core]
+	autocrlf = input        # commit: CRLF→LF, checkout: bez zmian — nie wrzucasz windowsowych końcówek
+	fsmonitor = true        # OS mówi gitowi które pliki się zmieniły, nie skanuje całego katalogu
+	untrackedCache = true   # lista untracked plików trzymana na dysku, nie liczona od nowa przy każdym status
+	excludesFile = ~/.gitignore_global  # prywatny globalny ignore — nie trafia do repo, działa w tle
+	pager = delta
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[credential "https://github.com"]
+	helper =
+	helper = !/usr/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper =
+	helper = !/usr/bin/gh auth git-credential
+[init]
+	defaultBranch = main
+[submodule]
+	recurse = true
+[push]
+	recurseSubmodules = on-demand  # przed push sprawdza submoduły i pushuje je jeśli parent wskazuje nowy commit
+	autoSetupRemote = true         # git push na nowej gałęzi działa od razu, bez -u origin <branch>
+[fetch]
+	prune = true      # usuwa lokalne referencje do gałęzi usuniętych na remote
+	pruneTags = true  # to samo dla tagów
+[merge]
+	conflictstyle = zdiff3  # w konflikcie pokazuje wspólnego przodka — widać skąd obie strony wyszły
+[diff]
+	algorithm = histogram  # lepsza matematyka diffa, mniej fałszywych dopasowań przy przesuwaniu bloków
+	colorMoved = default   # przeniesiony blok kodu (cut&paste) inny kolor niż zwykłe dodanie/usunięcie
+[branch]
+	sort = -committerdate  # minus = odwrotna kolejność, gałęzie od najświeższej aktywności
+[column]
+	ui = auto  # git branch w kolumnach gdy terminal wystarczająco szeroki
+[log]
+	date = human
+[help]
+	autocorrect = 10  # jednostka 1/10s, więc 10 = czeka 1 sekundę i sam poprawia literówkę w komendzie
+[stash]
+	showPatch = true            # git stash show pokazuje diff, nie tylko listę plików
+	showIncludeUntracked = true
+[tag]
+	sort = -version:refname  # sortuje semantycznie: v2.10 przed v2.9, nie stringowo
+[url "git@github.com:"]
+	insteadOf = https://github.com/  # każde clone/push przez HTTPS automatycznie idzie SSH
+[maintenance]
+	auto = true              # uruchamia maintenance automatycznie przy operacjach gita
+	strategy = incremental   # prefetch co godzinę, loose-objects codziennie, gc tygodniowo — w tle
+[commit]
+	verbose = true  # w edytorze commit message widać diff poniżej — nie musisz pamiętać co zmieniałeś
+[grep]
+	lineNumber = true
+	patternType = perl  # pełny regex (lookahead, grupy) w git grep
+[advice]
+	skippedCherryPicks = false  # wyłącza hint gdy cherry-pick pomija już zaaplikowane commity
+	detachedHead = false        # wyłącza ścianę tekstu przy checkout do konkretnego commita
+	addEmptyPathspec = false    # wyłącza ostrzeżenie gdy git add bez pasujących plików
+# [status]
+	# short = true    # skrócony output: M/A/D zamiast długich opisów
+	# branch = true   # pokazuje branch mimo short
+[interactive]
+	diffFilter = delta --color-only  # delta koloruje diff w git add -p
+[delta]
+	navigate = true       # n/N skacze między plikami w diffie
+	side-by-side = true   # diff w dwóch kolumnach obok siebie
+	line-numbers = true
