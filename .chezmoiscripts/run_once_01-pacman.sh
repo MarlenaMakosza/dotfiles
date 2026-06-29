@@ -11,6 +11,7 @@ pacman_install \
   git \
   pkgconf \
   fakeroot \
+  ca-certificates \
   # lld
 
 # --- Terminal / Shell ---
