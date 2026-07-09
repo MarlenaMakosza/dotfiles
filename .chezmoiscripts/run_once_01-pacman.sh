@@ -11,6 +11,7 @@ pacman_install \
   git \
   pkgconf \
   fakeroot \
+  ca-certificates \
   # lld
 
 # --- Terminal / Shell ---
@@ -45,6 +46,9 @@ pacman_install \
 
 # --- Dev tools ---
 pacman_install \
+  cmake \
+  ninja \
+  clang \
   go \
   deno \
   dotnet-sdk \
