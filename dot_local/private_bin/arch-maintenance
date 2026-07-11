@@ -1,0 +1,126 @@
+#!/usr/bin/env bash
+
+set -u
+
+BOLD='\033[1m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+RED='\033[0;31m'
+RESET='\033[0m'
+
+section() {
+    printf "\n${BOLD}==> %s${RESET}\n" "$1"
+}
+
+success() {
+    printf "${GREEN}✓ %s${RESET}\n" "$1"
+}
+
+warning() {
+    printf "${YELLOW}! %s${RESET}\n" "$1"
+}
+
+section "Odświeżenie uprawnień sudo"
+sudo -v || exit 1
+
+section "Aktualizacja systemu i pozostałych narzędzi"
+
+if command -v topgrade >/dev/null 2>&1; then
+    topgrade
+else
+    warning "Nie znaleziono Topgrade — uruchamiam pacman."
+    sudo pacman -Syu
+fi
+
+section "Stare pakiety w cache pacmana"
+
+if command -v paccache >/dev/null 2>&1; then
+    sudo paccache -r
+    sudo paccache -ruk0
+    success "Wyczyszczono stare wersje pakietów."
+else
+    warning "Brakuje pacman-contrib."
+fi
+
+section "Cache użytkownika"
+
+if command -v yay >/dev/null 2>&1; then
+    yay_cache="${XDG_CACHE_HOME:-$HOME/.cache}/yay"
+
+    if [[ -d "$yay_cache" ]]; then
+        yay -Sc --noconfirm
+        success "Wyczyszczono cache Yay."
+    fi
+fi
+
+section "Nieużywane pakiety Flatpak"
+
+if command -v flatpak >/dev/null 2>&1; then
+    flatpak uninstall --unused
+fi
+
+section "Logi systemowe starsze niż 30 dni"
+
+sudo journalctl --rotate
+sudo journalctl --vacuum-time=30days
+
+section "Osierocone pakiety"
+
+orphans="$(pacman -Qdtq 2>/dev/null || true)"
+
+if [[ -n "$orphans" ]]; then
+    warning "Znaleziono pakiety osierocone:"
+    printf '%s\n' "$orphans"
+    echo
+    echo "Nie usuwam ich automatycznie."
+    echo "Po sprawdzeniu możesz wykonać:"
+    echo "sudo pacman -Rns \$(pacman -Qdtq)"
+else
+    success "Brak pakietów osieroconych."
+fi
+
+section "Pliki konfiguracyjne pacnew/pacsave"
+
+if command -v pacdiff >/dev/null 2>&1; then
+    pacdiff --output
+else
+    warning "Nie znaleziono pacdiff."
+fi
+
+section "Uszkodzone jednostki systemd"
+
+failed_system="$(systemctl --failed --no-legend 2>/dev/null || true)"
+failed_user="$(systemctl --user --failed --no-legend 2>/dev/null || true)"
+
+if [[ -n "$failed_system" ]]; then
+    warning "Uszkodzone jednostki systemowe:"
+    printf '%s\n' "$failed_system"
+else
+    success "Brak uszkodzonych jednostek systemowych."
+fi
+
+if [[ -n "$failed_user" ]]; then
+    warning "Uszkodzone jednostki użytkownika:"
+    printf '%s\n' "$failed_user"
+else
+    success "Brak uszkodzonych jednostek użytkownika."
+fi
+
+section "Najważniejsze błędy od bieżącego uruchomienia"
+
+sudo journalctl -b -p err --no-pager || true
+
+section "Zajętość dysków"
+
+df -hT \
+    -x tmpfs \
+    -x devtmpfs \
+    -x squashfs
+
+section "Zakończono konserwację"
+
+echo "Sprawdź szczególnie:"
+echo "  • pakiety osierocone"
+echo "  • pliki pacnew/pacsave"
+echo "  • błędy journalctl"
+echo "  • uszkodzone usługi systemd"
