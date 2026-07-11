@@ -2,7 +2,7 @@
 set -euo pipefail
 
 npm_install() {
-  sudo -u "$INSTALL_USER" npm install -g "$@"
+  sudo -u "$INSTALL_USER" env NPM_CONFIG_PREFIX="/home/$INSTALL_USER/.local/share/npm-global" npm install -g "$@"
 }
 
 # --- AI / Dev tools ---
