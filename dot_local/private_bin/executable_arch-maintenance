@@ -5,7 +5,6 @@ set -u
 BOLD='\033[1m'
 GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
-RED='\033[0;31m'
 RESET='\033[0m'
 
 section() {
@@ -20,12 +19,21 @@ warning() {
     printf "${YELLOW}! %s${RESET}\n" "$1"
 }
 
+SKIP_UPGRADE=false
+for arg in "$@"; do
+    case "$arg" in
+        --skip-upgrade|-s) SKIP_UPGRADE=true ;;
+    esac
+done
+
 section "Odświeżenie uprawnień sudo"
 sudo -v || exit 1
 
 section "Aktualizacja systemu i pozostałych narzędzi"
 
-if command -v topgrade >/dev/null 2>&1; then
+if [[ "$SKIP_UPGRADE" == true ]]; then
+    warning "Pomijam aktualizację (--skip-upgrade)."
+elif command -v topgrade >/dev/null 2>&1; then
     topgrade
 else
     warning "Nie znaleziono Topgrade — uruchamiam pacman."
@@ -44,13 +52,9 @@ fi
 
 section "Cache użytkownika"
 
-if command -v yay >/dev/null 2>&1; then
-    yay_cache="${XDG_CACHE_HOME:-$HOME/.cache}/yay"
-
-    if [[ -d "$yay_cache" ]]; then
-        yay -Sc --noconfirm
-        success "Wyczyszczono cache Yay."
-    fi
+if command -v paru >/dev/null 2>&1; then
+    paru -Sc --noconfirm
+    success "Wyczyszczono cache paru."
 fi
 
 section "Nieużywane pakiety Flatpak"
