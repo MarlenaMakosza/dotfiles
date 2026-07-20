@@ -11,6 +11,7 @@ pacman_install \
   git \
   pkgconf \
   fakeroot \
+  pacman-contrib \
   # lld
 
 # --- Terminal / Shell ---
