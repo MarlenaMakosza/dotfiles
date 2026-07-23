@@ -1,4 +1,5 @@
 <!-- codebase-memory-mcp:start -->
+
 # Codebase Knowledge Graph (codebase-memory-mcp)
 
 This project uses codebase-memory-mcp to maintain a knowledge graph of the codebase.
@@ -23,6 +24,7 @@ ALWAYS prefer MCP graph tools over grep/glob/file-search for code discovery.
 <!-- codebase-memory-mcp:end -->
 
 <!-- postgres-mcp:start -->
+
 # PostgreSQL Database Access
 
 This project uses Postgres MCP Pro to inspect the live PostgreSQL database.
@@ -55,3 +57,20 @@ Prefer MCP tools over guessing schema details from code or migrations.
 - Sample data: `execute_sql(sql="SELECT id, status FROM public.orders LIMIT 20")`
 - Analyze query: `explain_query(sql="SELECT * FROM public.orders WHERE customer_id = $1")`
 <!-- postgres-mcp:end -->
+
+<!-- project-validation:start -->
+
+# Change Validation
+
+After making changes:
+
+1. Run the narrowest relevant test.
+2. Run typecheck.
+3. Run lint for affected files.
+4. Inspect `git diff`.
+5. Run the full suite only when the change has broad impact.
+
+Do not consider the task complete until the relevant validation steps have been performed.
+Report any commands that could not be run and explain why.
+
+<!-- project-validation:end -->
