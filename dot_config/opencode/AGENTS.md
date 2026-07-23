@@ -21,3 +21,37 @@ ALWAYS prefer MCP graph tools over grep/glob/file-search for code discovery.
 - Who calls it: `trace_path(function_name="OrderHandler", direction="inbound")`
 - Read source: `get_code_snippet(qualified_name="pkg/orders.OrderHandler")`
 <!-- codebase-memory-mcp:end -->
+
+<!-- postgres-mcp:start -->
+# PostgreSQL Database Access
+
+This project uses Postgres MCP Pro to inspect the live PostgreSQL database.
+Prefer MCP tools over guessing schema details from code or migrations.
+
+## Priority Order
+1. `list_schemas`
+2. `list_objects`
+3. `get_object_details`
+4. `execute_sql`
+5. `explain_query`
+6. `analyze_query_indexes`
+7. `get_top_queries`
+8. `analyze_workload_indexes`
+9. `analyze_db_health`
+
+## Rules
+- Treat the live database as the source of truth for the current schema.
+- Inspect tables, columns, constraints, and indexes before writing SQL.
+- Prefer read-only queries and use `LIMIT` for sample data.
+- Do not modify schema or data unless explicitly requested.
+- Do not expose secrets or sensitive data.
+- Use `explain_query` before recommending performance changes.
+- Check existing indexes before proposing new ones.
+- Use Codebase Memory to trace which application code uses the inspected tables or queries.
+
+## Examples
+- Inspect tables: `list_objects(schema_name="public", object_type="table")`
+- Inspect table details: `get_object_details(schema_name="public", object_name="orders", object_type="table")`
+- Sample data: `execute_sql(sql="SELECT id, status FROM public.orders LIMIT 20")`
+- Analyze query: `explain_query(sql="SELECT * FROM public.orders WHERE customer_id = $1")`
+<!-- postgres-mcp:end -->
