@@ -8,7 +8,20 @@
           "command": [
               "/home/lenerystia/.local/bin/codebase-memory-mcp"
           ]
-      }
+      },
+      "postgres": {
+          "type": "local",
+          "command": [
+            "uvx",
+            "postgres-mcp",
+            "--access-mode=restricted"
+          ],
+          "environment": {
+            "DATABASE_URI": "postgresql://root:mysecretpassword@localhost:5432/local"
+          },
+          "enabled": true,
+          "timeout": 60000
+        },
   },
   "provider": {
     "ollama": {
