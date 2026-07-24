@@ -74,3 +74,17 @@ Do not consider the task complete until the relevant validation steps have been 
 Report any commands that could not be run and explain why.
 
 <!-- project-validation:end -->
+
+<!-- latex-validation:start-->
+
+# LaTeX Validation
+
+After modifying LaTeX files:
+
+1. Inspect LSP diagnostics.
+2. Run `latexmk -pdf -interaction=nonstopmode thesis.tex`.
+3. Check for undefined references and citations.
+4. Do not modify citation keys, labels, paths, or command names unless required.
+5. Inspect `git diff` before completing the task.
+
+<!-- latex-validation:end -->
