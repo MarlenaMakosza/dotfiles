@@ -1,6 +1,25 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "lsp": true,
+  "lsp": {
+    "texlab": {
+      "command": ["texlab"],
+      "extensions": [".tex", ".bib", ".cls", ".sty"],
+      "initialization": {
+        "texlab": {
+          "build": {
+            "executable": "latexmk",
+            "args": [
+              "-pdf",
+              "-interaction=nonstopmode",
+              "-synctex=1",
+              "%f"
+            ],
+            "onSave": true
+          }
+        }
+      }
+    }
+  },
   "permission": {
     "read": "allow",
     "glob": "allow",
