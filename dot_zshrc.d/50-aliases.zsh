@@ -65,3 +65,6 @@ alias wts='wt switch'            # switch existing
 alias wtl='wt list'              # status
 alias wtr='wt remove'            # cleanup
 alias wtm='wt merge main'        # merge do main
+
+# === Codebase memory mcp ===
+alias codebase='codebase-memory-mcp --ui=true --port=9749' # Run UI for Codebase memory mcp
