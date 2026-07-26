@@ -4,6 +4,8 @@ sourceDir = "{{ .chezmoi.homeDir }}/dotfiles"
   gitEmail = {{ promptStringOnce . "gitEmail" "Git email" | quote }}
   gitName = {{ promptStringOnce . "gitName" "Git name" | quote }}
   atuinSyncAddr = {{ promptStringOnce . "atuinSyncAddr" "Atuin sync address" | quote }}
+  serverIp = {{ promptStringOnce . "serverIp" "Server IP address" | quote }}
+  dbIp = {{ promptStringOnce . "dbIp" "Database IP address" | quote }}
   sourceProjects = {{ promptStringOnce . "sourceProjects" "Projects directory (e.g. /source)" | quote }}
   plantumlJarPath = {{ promptStringOnce . "plantumlJarPath" "PlantUML jar path (e.g. /opt/plantuml.jar)" | quote }}
 
