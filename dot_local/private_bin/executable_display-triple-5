@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# triple-5.sh - Konfiguracja dwóch monitorów zamiast triple (DP-4 fizycznie odłączony)
+# DP-3 (lewy), DP-5 (prawy) @ 2560x1440, zsunięte obok siebie - bez luki
+# Wyłączone: wszystkie HDMI
+
+set -euo pipefail
+source "$HOME/.local/bin/display-lib"
+
+kscreen-doctor \
+  output.HDMI-A-1.disable \
+  output.HDMI-A-3.disable \
+  output.HDMI-A-4.disable
+
+set_out "DP-3" "2560x1440@59.95" "0,1200" "1"
+set_out "DP-5" "2560x1440@59.95" "2560,1200" "1"
