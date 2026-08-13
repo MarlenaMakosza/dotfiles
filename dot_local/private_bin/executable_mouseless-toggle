@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+APP_ID="net.sonuscape.mouseless"
+BRANCH="stable"
+
+if flatpak ps --columns=application | grep -qx "$APP_ID"; then
+  flatpak kill "$APP_ID"
+else
+  flatpak run --branch="$BRANCH" "$APP_ID" &
+fi
