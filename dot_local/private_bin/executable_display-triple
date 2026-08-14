@@ -8,7 +8,7 @@ source "$HOME/.local/bin/display-lib"
 
 # Dynamiczne rozpoznawanie ID trybów (stabilne po restarcie)
 M_DP3="$(mode_id_fuzzy "DP-3" "2560x1440@59.95")"
-M_DP4="$(mode_id_fuzzy "DP-4" "2560x1440@165.00")"
+M_DP4="$(mode_id_fuzzy "DP-4" "2560x1440@60.00")"
 M_DP5="$(mode_id_fuzzy "DP-5" "2560x1440@59.95")"
 
 kscreen-doctor \
