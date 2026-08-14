@@ -88,3 +88,28 @@ After modifying LaTeX files:
 5. Inspect `git diff` before completing the task.
 
 <!-- latex-validation:end -->
+
+
+# Architecture
+
+- src/core/ - engine-independent domain logic
+- src/scene/ - Three.js scene construction
+- src/rendering/ - renderer, postprocessing, shaders
+- src/ui/ - application UI
+- src/state/ - application state
+
+# Rules
+
+- TypeScript strict mode.
+- Do not use `any`.
+- Keep Three.js objects out of domain state.
+- Dispose geometries, materials and textures when removing objects.
+- Prefer existing abstractions before creating new ones.
+- Before modifying architecture, inspect related modules and call sites.
+- Do not introduce dependencies without asking.
+
+# Three.js
+
+- Three.js version is defined in package.json.
+- Do not assume APIs from another Three.js version.
+- Reuse the existing renderer/camera/scene lifecycle.
