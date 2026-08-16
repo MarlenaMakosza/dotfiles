@@ -16,6 +16,7 @@ llama-3coder() {
     --no-mmap \
     -ngl all \
     --n-cpu-moe 35 \
+    --temperature 0.2 \
     -fa on \
     -ctk q8_0 \
     -ctv q8_0 \
