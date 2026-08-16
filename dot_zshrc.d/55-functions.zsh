@@ -27,7 +27,7 @@ llama-3coder() {
 
 llama-deepseek() {
   llama-server \
-    -m "$HOME"/Models/llama.cpp-cache/models--bartowski--deepseek-ai_DeepSeek-Coder-V2-Instruct-0724-GGUF/snapshots/*/*-Q4_K_M-00001-of-*.gguf \
+    -m "$HOME"/Models/llama.cpp-cache/DeepSeek-Coder-V2-Instruct-0724-GGUF/DeepSeek-Coder-V2-Instruct-0724-Q4_K_M-00001-of-00004.gguf \
     --alias deepseek_coder_v2_bartowski \
     --host 0.0.0.0 \
     --port 8080 \
