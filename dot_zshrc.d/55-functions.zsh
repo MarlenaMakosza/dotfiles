@@ -24,3 +24,21 @@ llama-3coder() {
     -t 16 \
     -tb 24
 }
+
+llama-deepseek() {
+  llama-server \
+    -m "$HOME"/Models/llama.cpp-cache/models--bartowski--deepseek-ai_DeepSeek-Coder-V2-Instruct-0724-GGUF/snapshots/*/*-Q4_K_M-00001-of-*.gguf \
+    --alias deepseek_coder_v2_bartowski \
+    --host 0.0.0.0 \
+    --port 8080 \
+    --no-mmap \
+    -ngl all \
+    --cpu-moe \
+    -fa on \
+    -ctk q8_0 \
+    -ctv q8_0 \
+    -c 131072 \
+    -np 1 \
+    -t 22 \
+    -tb 24
+}
