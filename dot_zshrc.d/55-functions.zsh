@@ -33,11 +33,12 @@ llama-deepseek() {
     --port 8080 \
     --no-mmap \
     -ngl all \
+    --no-kv-offload \
     --cpu-moe \
     -fa on \
     -ctk q8_0 \
     -ctv q8_0 \
-    -c 131072 \
+    -c 16384 \
     -np 1 \
     -t 22 \
     -tb 24
