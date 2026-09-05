@@ -44,3 +44,54 @@ llama-deepseek() {
     -t 22 \
     -tb 24
 }
+
+# === Git: delete local branches already merged into the main branch ===
+# Usage:  gbclean        show what would be deleted
+#         gbclean -f     actually delete them
+#
+# Only touches local branches, never the remote, and uses `git branch -d`
+# (lowercase) so git itself refuses to drop anything unmerged.
+gbclean() {
+  git rev-parse --git-dir >/dev/null 2>&1 || {
+    print -u2 "gbclean: not a git repository"
+    return 1
+  }
+
+  # main branch = whatever origin/HEAD points at, else main, else master
+  local base
+  base=$(git symbolic-ref --quiet --short refs/remotes/origin/HEAD 2>/dev/null)
+  base=${base#origin/}
+  if [[ -z $base ]]; then
+    for b in main master; do
+      git show-ref --verify --quiet "refs/heads/$b" && base=$b && break
+    done
+  fi
+  [[ -z $base ]] && {
+    print -u2 "gbclean: cannot determine the main branch"
+    return 1
+  }
+
+  git fetch --prune --quiet
+
+  local -a stale
+  stale=(${(f)"$(git branch --merged "$base" --format='%(refname:short)' | grep -vx "$base")"})
+
+  # never delete the branch that is currently checked out
+  local current
+  current=$(git branch --show-current)
+  stale=(${stale:#$current})
+
+  if (( ${#stale} == 0 )); then
+    print "gbclean: nothing to clean (base: $base)"
+    return 0
+  fi
+
+  if [[ $1 == "-f" || $1 == "--force" ]]; then
+    print "gbclean: deleting ${#stale} branch(es) merged into $base"
+    git branch -d ${stale[@]}
+  else
+    print "gbclean: merged into $base, would delete ${#stale} branch(es):"
+    printf '  %s\n' ${stale[@]}
+    print "\nrun 'gbclean -f' to delete them"
+  fi
+}
