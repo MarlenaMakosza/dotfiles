@@ -304,6 +304,13 @@
   },
   "preferred_line_length": 80,
   "remove_trailing_whitespace_on_save": true,
+  "languages": {
+    // Markdown uses two trailing spaces as a hard line break.
+    // Trimming them collapses lists into a single paragraph when rendered.
+    "Markdown": {
+      "remove_trailing_whitespace_on_save": false,
+    },
+  },
   "search": {
     "whole_word": false,
     "case_sensitive": false,
