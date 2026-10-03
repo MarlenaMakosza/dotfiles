@@ -26,12 +26,22 @@ llama-3coder() {
     -tb 24
 }
 
+llama-autocomplete() {
+  llama-server \
+    -hf ggml-org/Qwen2.5-Coder-7B-Q8_0-GGUF \
+    --host 0.0.0.0 \
+    --port 8080 \
+    --load-mode mmap \
+    -ngl all \
+    -c 16384
+}
+
 llama-deepseek() {
   llama-server \
     -m "$HOME"/Models/llama.cpp-cache/DeepSeek-Coder-V2-Instruct-0724-GGUF/DeepSeek-Coder-V2-Instruct-0724-Q4_K_M-00001-of-00004.gguf \
     --alias deepseek_coder_v2_bartowski \
     --host 0.0.0.0 \
-    --port 8080 \
+    --port 8081 \
     --no-mmap \
     -ngl all \
     --no-kv-offload \
