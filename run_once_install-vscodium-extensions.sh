@@ -35,6 +35,7 @@ extensions=(
   spywhere.guides
   steoates.autoimport
   streetsidesoftware.code-spell-checker
+  streetsidesoftware.code-spell-checker-polish
   svelte.svelte-vscode
   techer.open-in-browser
   uloco.theme-bluloco-light
