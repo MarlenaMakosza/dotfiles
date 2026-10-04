@@ -17,6 +17,7 @@ extensions=(
   formulahendry.auto-close-tag
   formulahendry.auto-rename-tag
   Gruntfuggly.todo-tree
+  gharveymn.nightswitch-lite
   hashicorp.terraform
   james-yu.latex-workshop
   jebbs.plantuml
