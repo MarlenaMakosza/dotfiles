@@ -3,7 +3,7 @@ set -euo pipefail
 
 # latexmk zakładany z osobnej instalacji texlive-full (run_once_08-texlive.sh).
 
-read -rp "Zainstalować opencode + stack AI (llama.cpp, texlab, MCP)? [y/N] " answer < /dev/tty
+read -rp "Zainstalować opencode + stack AI (llama.cpp, texlab, postgres-mcp)? [y/N] " answer < /dev/tty
 
 case "$answer" in
   [yY]|[yY][eE][sS]) ;;
@@ -30,7 +30,6 @@ fi
 # https://github.com/crystaldba/postgres-mcp
 uvx postgres-mcp --help &>/dev/null
 
-# --- codebase-memory-mcp ---
-curl -fsSL https://raw.githubusercontent.com/DeusData/codebase-memory-mcp/main/install.sh | bash -s -- --ui
+# codebase-memory-mcp: osobny, opcjonalny skrypt run_once_after_11-codebase-memory-mcp.sh
 
 echo "opencode stack gotowy."

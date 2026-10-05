@@ -1,6 +1,7 @@
 [Unit]
 Description=codebase-memory-mcp (graph UI + file watcher)
 After=default.target
+ConditionPathExists=%h/.local/bin/codebase-memory-mcp
 
 [Service]
 Type=simple
