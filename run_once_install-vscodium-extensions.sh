@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Run once on chezmoi apply — installs VSCodium extensions via Open VSX.
 # MS Marketplace extensions (ms-*) are excluded; install manually via VSIX.
+# Local VSIX files from vscodium_extensions/ in the source dir are installed too.
 
 extensions=(
   aaron-bond.better-comments
@@ -53,4 +54,10 @@ extensions=(
 
 for ext in "${extensions[@]}"; do
   codium --install-extension "$ext" || echo "FAILED: $ext"
+done
+
+vsix_dir="${CHEZMOI_SOURCE_DIR:-$HOME/dotfiles}/vscodium_extensions"
+for vsix in "$vsix_dir"/*.vsix; do
+  [ -e "$vsix" ] || continue
+  codium --install-extension "$vsix" || echo "FAILED: $vsix"
 done
