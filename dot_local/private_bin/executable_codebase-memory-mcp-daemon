@@ -1,0 +1,4 @@
+#!/bin/sh
+# Uruchamia codebase-memory-mcp w tle (UI http://127.0.0.1:9749).
+# Serwer MCP działa na stdio i kończy się po EOF, więc trzymamy stdin otwarte.
+exec sh -c 'tail -f /dev/null | exec "$HOME/.local/bin/codebase-memory-mcp" >/dev/null'

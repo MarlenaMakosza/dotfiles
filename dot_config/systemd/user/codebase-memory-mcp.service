@@ -1,0 +1,12 @@
+[Unit]
+Description=codebase-memory-mcp (graph UI + file watcher)
+After=default.target
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/codebase-memory-mcp-daemon
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target
