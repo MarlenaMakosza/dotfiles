@@ -30,6 +30,6 @@ fi
 # https://github.com/crystaldba/postgres-mcp
 uvx postgres-mcp --help &>/dev/null
 
-# codebase-memory-mcp: osobny, opcjonalny skrypt run_once_after_11-codebase-memory-mcp.sh
+# codebase-memory-mcp: osobny, opcjonalny skrypt run_once_after_11-agent-tools.sh
 
 echo "opencode stack gotowy."
