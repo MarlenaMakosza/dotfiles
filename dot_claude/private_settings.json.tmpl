@@ -1,0 +1,50 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "'/home/lenerystia/.local/bin/jcode' setup-hotkey --notify-cli-launch claude",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash ~/.claude/statusline-command.sh",
+    "refreshInterval": 2
+  },
+  "enabledPlugins": {
+    "caveman@caveman": true,
+    "frontend-design@claude-plugins-official": true,
+    "straznik@local-mods": true
+  },
+  "extraKnownMarketplaces": {
+    "caveman": {
+      "source": {
+        "source": "github",
+        "repo": "JuliusBrussee/caveman"
+      }
+    },
+    "local-mods": {
+      "source": {
+        "source": "directory",
+        "path": "/home/lenerystia/.claude/claude-mods"
+      }
+    }
+  },
+  "pluginConfigs": {
+    "straznik@local-mods": {
+      "options": {
+        "names": {{ .straznikNames | quote }}
+      }
+    }
+  },
+  "agentPushNotifEnabled": true,
+  "model": "opus",
+  "cleanupPeriodDays": 3650
+}

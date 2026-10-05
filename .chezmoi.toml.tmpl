@@ -8,6 +8,7 @@ sourceDir = "{{ .chezmoi.homeDir }}/dotfiles"
   dbIp = {{ promptStringOnce . "dbIp" "Database IP address" | quote }}
   sourceProjects = {{ promptStringOnce . "sourceProjects" "Projects directory (e.g. /source)" | quote }}
   plantumlJarPath = {{ promptStringOnce . "plantumlJarPath" "PlantUML jar path (e.g. /opt/plantuml.jar)" | quote }}
+  straznikNames = {{ promptStringOnce . "straznikNames" "Straznik: comma-separated names to anonymize" | quote }}
 
 [diff]
   command = "meld"

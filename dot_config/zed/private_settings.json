@@ -395,5 +395,11 @@
     "hide_root": false,
     "starts_open": true,
   },
+  "context_servers": {
+    "ssgrep": {
+      "command": "/home/lenerystia/.local/bin/ssgrep",
+      "args": ["mcp"],
+    },
+  },
   "ui_font_size": 24.0,
 }
