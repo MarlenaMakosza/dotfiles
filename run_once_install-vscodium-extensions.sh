@@ -22,6 +22,7 @@ extensions=(
   hashicorp.terraform
   james-yu.latex-workshop
   jebbs.plantuml
+  ltex-plus.vscode-ltex-plus
   mhutchie.git-graph
   mikestead.dotenv
   paulmolluzzo.convert-css-in-js
