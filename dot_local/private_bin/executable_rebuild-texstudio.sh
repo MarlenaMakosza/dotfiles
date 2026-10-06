@@ -7,9 +7,10 @@
 #   --force       rebuild even if the installed package is already up to date
 #   --no-install  build and verify only, never run pacman -U
 #
-# Upstream bug worked around here: CMakeLists.txt calls find_package(QTermWidget),
-# but qtermwidget 2.x ships a "qtermwidget6" CMake config, and the link step tests
-# QTERMWIDGET_FOUND, which is never set. Without the fix INTERNAL_TERMINAL stays off.
+# Upstream CMake already supports the terminal: cmake/FindQTermWidget.cmake looks
+# for qtermwidget${QT_VERSION_MAJOR} and defines INTERNAL_TERMINAL when found.
+# Arch only lacks qtermwidget in makedepends (dropped in FS#77426, back when
+# qtermwidget was Qt5-only), so that is the whole change.
 
 set -euo pipefail
 
@@ -65,18 +66,6 @@ makedepends+=('qtermwidget')
 _md=(); for _d in "${makedepends[@]}"; do [[ $_d == mercurial ]] || _md+=("$_d"); done
 makedepends=("${_md[@]}"); unset _md _d   # mercurial is not used by the build
 
-eval "_arch_$(declare -f prepare)"
-prepare() {
-    _arch_prepare
-    cd "$srcdir/texstudio-${pkgver}"
-    sed -i \
-        -e 's/^find_package(QTermWidget QUIET)/find_package(qtermwidget6 QUIET)/' \
-        -e 's/^if(QTermWidget_FOUND)/if(qtermwidget6_FOUND)/' \
-        -e 's/^if(QTERMWIDGET_FOUND)/if(qtermwidget6_FOUND)/' \
-        CMakeLists.txt
-    grep -q 'qtermwidget6' CMakeLists.txt \
-        || { echo "CMakeLists.txt changed upstream, qtermwidget fix needs review" >&2; return 1; }
-}
 EOF
 
 pkgfile=$(makepkg --packagelist | grep -v -- '-debug-' | head -1)

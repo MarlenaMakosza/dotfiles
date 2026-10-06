@@ -10,15 +10,17 @@ Oficjalny pakiet `texstudio` (Arch/Manjaro) jest kompilowany bez
 (`#ifdef INTERNAL_TERMINAL`), więc samo doinstalowanie `qtermwidget` nic nie
 daje i nie ma żadnej opcji w konfiguracji, która by go włączyła.
 
-Dodatkowo `CMakeLists.txt` TeXstudio (4.9.7, 4.9.8, master) ma błąd:
+CMake TeXstudio obsługuje terminal bez żadnych poprawek: moduł
+`cmake/FindQTermWidget.cmake` szuka `qtermwidget${QT_VERSION_MAJOR}` i po
+znalezieniu włącza `INTERNAL_TERMINAL`. Brakuje tylko zależności w PKGBUILD
+Archa. Arch miał `qtermwidget` w zależnościach przez jeden dzień (4.5.1, luty
+2023), ale usunął go w FS#77426, bo `qtermwidget` było wtedy tylko dla Qt5.
+Od LXQt 2.0 (2024) `qtermwidget` jest dla Qt6, ale zależność nie wróciła.
+Debian i Ubuntu budują TeXstudio z `qtermwidget` i tam terminal jest.
 
-- `find_package(QTermWidget)` nie znajduje `qtermwidget` 2.x, który instaluje
-  config CMake pod nazwą `qtermwidget6`,
-- linkowanie sprawdza zmienną `QTERMWIDGET_FOUND`, której nic nie ustawia.
-
-Skrypt bierze PKGBUILD Archa, dopisuje na jego końcu poprawki (bez edycji
-oryginalnych linii), buduje pakiet i sprawdza, że binarka naprawdę linkuje
-`libqtermwidget6`.
+Skrypt bierze PKGBUILD Archa, dopisuje na jego końcu `qtermwidget` do
+`depends` i `makedepends` (bez edycji oryginalnych linii), buduje pakiet i
+sprawdza, że binarka naprawdę linkuje `libqtermwidget6`.
 
 ## Wymagania
 
@@ -114,10 +116,8 @@ odtworzy go przy następnym uruchomieniu.
 
 ## Gdy coś się nie uda
 
-- `CMake nie wykrył QTermWidget`: sprawdź `pacman -Q qtermwidget` i log buildu.
-- `CMakeLists.txt changed upstream, qtermwidget fix needs review`: upstream
-  zmienił fragment CMake z QTermWidget. Sprawdź, czy błąd naprawiono (wtedy
-  wystarczy `qtermwidget` w `makedepends`), i dostosuj blok `prepare()` w
-  skrypcie.
+- `CMake nie wykrył QTermWidget`: sprawdź `pacman -Q qtermwidget` i
+  `pkg-config --modversion qtermwidget6`, potem log buildu. Jeśli upstream
+  zmienił `cmake/FindQTermWidget.cmake`, sprawdź, czego nowy moduł szuka.
 - `brak rewizji X w repozytorium Archa`: Manjaro ma wersję, której Arch nie
   otagował. Użyj `--latest`.
