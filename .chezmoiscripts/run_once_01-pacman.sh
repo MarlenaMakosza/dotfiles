@@ -117,6 +117,8 @@ pacman_install \
   okular \
   pandoc-cli \
   texstudio \
+  hunspell-pl \
+  hunspell-en_us \
   firefox-developer-edition
   # texlive-full \
 
