@@ -15,8 +15,10 @@ CMake TeXstudio obsługuje terminal bez żadnych poprawek: moduł
 znalezieniu włącza `INTERNAL_TERMINAL`. Brakuje tylko zależności w PKGBUILD
 Archa. Arch miał `qtermwidget` w zależnościach przez jeden dzień (4.5.1, luty
 2023), ale usunął go w FS#77426, bo `qtermwidget` było wtedy tylko dla Qt5.
-Od LXQt 2.0 (2024) `qtermwidget` jest dla Qt6, ale zależność nie wróciła.
-Debian i Ubuntu budują TeXstudio z `qtermwidget` i tam terminal jest.
+Obsługa QTermWidget z Qt6 jest w TeXstudio dopiero od wersji 4.9.2
+(upstream issue #3761, `qtermwidget` dla Qt6 istnieje od LXQt 2.0), a pakiet
+Archa nie dodał jeszcze zależności z powrotem. Debian i Ubuntu budują TeXstudio
+z `qtermwidget` i tam terminal jest.
 
 Skrypt bierze PKGBUILD Archa, dopisuje na jego końcu `qtermwidget` do
 `depends` i `makedepends` (bez edycji oryginalnych linii), buduje pakiet i
