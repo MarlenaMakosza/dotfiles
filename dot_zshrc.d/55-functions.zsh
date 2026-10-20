@@ -55,6 +55,22 @@ llama-deepseek() {
     -tb 24
 }
 
+# === Local llama-server: Qwen3-Next-80B-A3B-Instruct (chat, Trilium, tool calling) ===
+llama-qwen3next() {
+  llama-server \
+    -hf bartowski/Qwen_Qwen3-Next-80B-A3B-Instruct-GGUF:Q4_K_M \
+    --alias qwen3next_bartowski \
+    --host 127.0.0.1 \
+    --port 8080 \
+    -ngl 99 \
+    --n-cpu-moe 40 \
+    -fa on \
+    -ctk q8_0 \
+    -ctv q8_0 \
+    -c 32768 \
+    --jinja
+}
+
 # === Git: delete local branches already merged into the main branch ===
 # Usage:  gbclean        show what would be deleted
 #         gbclean -f     actually delete them
