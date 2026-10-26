@@ -23,7 +23,10 @@ llama-3coder() {
     -c 131072 \
     -np 1 \
     -t 16 \
-    -tb 24
+    -tb 24 \
+    --jinja \
+    --mcp-servers-config "$HOME/AI-isolation/mcp.json" \
+    "$@"
 }
 
 llama-autocomplete() {
@@ -67,7 +70,7 @@ llama-qwen3next() {
     -fa on \
     -ctk q8_0 \
     -ctv q8_0 \
-    -c 32768 \
+    -c 65536 \
     --jinja \
     --mcp-servers-config "$HOME/AI-isolation/mcp.json" \
     "$@"
