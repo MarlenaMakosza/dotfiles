@@ -69,7 +69,8 @@ llama-qwen3next() {
     -ctv q8_0 \
     -c 32768 \
     --jinja \
-    --mcp-servers-config mcp.json
+    --mcp-servers-config "$HOME/AI-isolation/mcp.json" \
+    "$@"
 }
 
 # === Git: delete local branches already merged into the main branch ===
