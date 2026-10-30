@@ -416,6 +416,8 @@ use_sudo = true
 [containers]
 # Specify the containers to ignore while updating (Wildcard supported)
 # ignored_containers = ["ghcr.io/rancher-sandbox/rancher-desktop/rdx-proxy:latest", "docker.io*"]
+# Local images built from source, not on any registry
+ignored_containers = ["hand-notes-*", "handnotes-*", "livequill-*"]
 # Specify the runtime to use for containers (default: "docker", allowed values: "docker", "podman")
 # runtime = "podman"
 
