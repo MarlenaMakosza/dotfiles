@@ -134,12 +134,14 @@ notify_end = "on_failure"
 #
 "Timeshift pre-topgrade" = "sudo timeshift --create --comments \"pre-topgrade\" --tags O"
 "Backup dotfiles" = "chezmoi git -- push"
+'Docker start' = 'systemctl is-active -q docker.service || { sudo systemctl start docker.service && touch "${XDG_RUNTIME_DIR:-/tmp}/topgrade-docker-started"; }'
 
 
 # Commands to run after anything
 [post_commands]
 # "Emacs Snapshot" = "rm -rf ~/.emacs.d/elpa.bak && cp -rl ~/.emacs.d/elpa ~/.emacs.d/elpa.bak"
 "sudo paccache -r" = "sudo paccache -r"
+'Docker stop' = '[ -f "${XDG_RUNTIME_DIR:-/tmp}/topgrade-docker-started" ] && sudo systemctl stop docker.service docker.socket; rm -f "${XDG_RUNTIME_DIR:-/tmp}/topgrade-docker-started"'
 
 
 # Custom commands
