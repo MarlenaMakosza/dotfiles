@@ -1,50 +1,119 @@
 {
-  "hooks": {
-    "SessionStart": [
-      {
-        "matcher": "startup|resume",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "'/home/lenerystia/.local/bin/jcode' setup-hotkey --notify-cli-launch claude",
-            "timeout": 5
-          }
+    "cleanupPeriodDays": 3650,
+    "model": "opus",
+    "hooks": {
+        "SessionStart": [
+            {
+                "matcher": "startup|resume",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "'/home/lenerystia/.local/bin/jcode' setup-hotkey --notify-cli-launch claude",
+                        "timeout": 5
+                    }
+                ]
+            },
+            {
+                "matcher": "startup",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "~/.claude/hooks/cbm-session-reminder"
+                    }
+                ]
+            },
+            {
+                "matcher": "resume",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "~/.claude/hooks/cbm-session-reminder"
+                    }
+                ]
+            },
+            {
+                "matcher": "clear",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "~/.claude/hooks/cbm-session-reminder"
+                    }
+                ]
+            },
+            {
+                "matcher": "compact",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "~/.claude/hooks/cbm-session-reminder"
+                    }
+                ]
+            }
+        ],
+        "PreToolUse": [
+            {
+                "matcher": "Bash|PowerShell|Monitor",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "/home/lenerystia/.local/bin/dcg"
+                    }
+                ]
+            },
+            {
+                "matcher": "Grep|Glob",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "~/.claude/hooks/cbm-code-discovery-gate",
+                        "timeout": 5
+                    }
+                ]
+            }
+        ],
+        "SubagentStart": [
+            {
+                "matcher": "*",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "~/.claude/hooks/cbm-subagent-reminder"
+                    }
+                ]
+            }
         ]
-      }
-    ]
-  },
-  "statusLine": {
-    "type": "command",
-    "command": "bash ~/.claude/statusline-command.sh",
-    "refreshInterval": 2
-  },
-  "enabledPlugins": {
-    "caveman@caveman": true,
-    "frontend-design@claude-plugins-official": true,
-    "straznik@local-mods": true
-  },
-  "extraKnownMarketplaces": {
-    "caveman": {
-      "source": {
-        "source": "github",
-        "repo": "JuliusBrussee/caveman"
-      }
     },
-    "local-mods": {
-      "source": {
-        "source": "directory",
-        "path": "/home/lenerystia/.claude/claude-mods"
-      }
-    }
-  },
-  "pluginConfigs": {
-    "straznik@local-mods": {
-      "options": {
-        "names": {{ .straznikNames | quote }}
-      }
-    }
-  },
-  "agentPushNotifEnabled": true,
-  "model": "opus",
-  "cleanupPeriodDays": 3650
+    "statusLine": {
+        "type": "command",
+        "command": "bash ~/.claude/statusline-command.sh",
+        "refreshInterval": 2
+    },
+    "enabledPlugins": {
+        "caveman@caveman": true,
+        "frontend-design@claude-plugins-official": true,
+        "straznik@local-mods": true,
+        "cc-plugin-you-should-know@builtin": true
+    },
+    "extraKnownMarketplaces": {
+        "caveman": {
+            "source": {
+                "source": "github",
+                "repo": "JuliusBrussee/caveman"
+            }
+        },
+        "local-mods": {
+            "source": {
+                "source": "directory",
+                "path": "/home/lenerystia/.claude/claude-mods"
+            }
+        }
+    },
+    "pluginConfigs": {
+        "straznik@local-mods": {
+            "options": {
+                "names": {{ .straznikNames | quote }}
+            }
+        }
+    },
+    "agentPushNotifEnabled": true
 }
