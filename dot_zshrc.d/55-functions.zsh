@@ -13,7 +13,7 @@ llama-3coder() {
     --alias qwen3coder_bartkowski_hui \
     --host 0.0.0.0 \
     --port 8080 \
-    --no-mmap \
+    --load-mode none \
     -ngl all \
     --n-cpu-moe 35 \
     --temperature 0.2 \
@@ -45,7 +45,7 @@ llama-deepseek() {
     --alias deepseek_coder_v2_bartowski \
     --host 0.0.0.0 \
     --port 8081 \
-    --no-mmap \
+    --load-mode none \
     -ngl all \
     --no-kv-offload \
     --cpu-moe \
