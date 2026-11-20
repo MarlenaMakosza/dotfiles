@@ -1,0 +1,10 @@
+#!/bin/bash
+# YouTube links -> OpenTubeX, everything else -> Vivaldi
+for url in "$@"; do
+  case "$url" in
+    http://youtube.com/*|https://youtube.com/*|http://www.youtube.com/*|https://www.youtube.com/*|https://m.youtube.com/*|http://youtu.be/*|https://youtu.be/*)
+      flatpak run org.opentubex.OpenTubeX "$url" & ;;
+    *)
+      vivaldi-stable "$url" & ;;
+  esac
+done

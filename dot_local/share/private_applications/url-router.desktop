@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=URL Router
+Comment=YouTube to OpenTubeX, rest to Vivaldi
+Exec=/home/lenerystia/.local/bin/url-router %U
+Type=Application
+NoDisplay=true
+MimeType=x-scheme-handler/http;x-scheme-handler/https;
